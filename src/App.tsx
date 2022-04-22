@@ -10,12 +10,12 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  theme,
 } from '@chakra-ui/react';
+import { customTheme } from './utils/customTheme';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import Board from './components/Board';
-import SliderInput from './components/NumberInputContainer';
-import { create2DArray } from './utils/utils';
+import NumberInput from './components/NumberInputContainer';
+import { create2DArray, resize2DArray } from './utils/utils';
 import {
   blinker,
   toad,
@@ -34,56 +34,55 @@ import {
 
 export const App = () => {
   const minColumns = 20;
-  const maxColumns = 200;
+  const maxColumns = 500;
   const defaultColumns = 50;
 
   const minRows = 20;
-  const maxRows = 200;
+  const maxRows = 500;
   const defaultRows = 50;
 
-  const defaultTileLength = 14;
-
-  const [columns, setColumns] = useState<number>(defaultColumns);
-  const [rows, setRows] = useState<number>(defaultRows);
   const [boardArray, setBoardArray] = useState<boolean[][]>(() =>
-    create2DArray(columns, rows)
+    gosperGliderGun()
   );
 
   const onColumnsChange = (value: number) => {
-    if (value >= minColumns && value <= maxColumns) setColumns(value);
+    if (value >= minColumns && value <= maxColumns)
+      setBoardArray(resize2DArray(value, boardArray[0].length, boardArray));
   };
   const onRowsChange = (value: number) => {
-    if (value >= minRows && value <= maxRows) setRows(value);
+    if (value >= minRows && value <= maxRows)
+      setBoardArray(resize2DArray(boardArray.length, value, boardArray));
   };
 
-  useEffect(() => {
-    const temp_arr = create2DArray(columns, rows);
-    setBoardArray(temp_arr);
-  }, [columns, rows]);
+  const importPattern = (pattern: boolean[][]) => {
+    setBoardArray(() => pattern);
+  };
 
   return (
-    <ChakraProvider theme={theme}>
-      <Box backgroundColor="white" textAlign="center" fontSize="l">
+    <ChakraProvider theme={customTheme}>
+      <Box backgroundColor="blackAlpha.50" textAlign="center" fontSize="l">
         <VStack minHeight={'100vh'} spacing={4} p={3}>
           <Flex flexDirection="row" alignItems="center" justifyItems="center">
             <Box height="20px" lineHeight="20px" paddingRight="1rem">
               Columns:
             </Box>
-            <SliderInput
+            <NumberInput
               defaultValue={defaultColumns}
               minValue={minColumns}
               maxValue={maxColumns}
-              value={columns}
+              stepSize={2}
+              value={boardArray.length}
               setValue={onColumnsChange}
             />
             <Box height="20px" lineHeight="20px" paddingRight="1rem">
               Rows:
             </Box>
-            <SliderInput
+            <NumberInput
               defaultValue={defaultRows}
               minValue={minRows}
               maxValue={maxRows}
-              value={rows}
+              stepSize={2}
+              value={boardArray[0].length}
               setValue={onRowsChange}
             />
           </Flex>
@@ -93,21 +92,17 @@ export const App = () => {
                 Oscillators
               </MenuButton>
               <MenuList>
-                <MenuItem onClick={() => setBoardArray(blinker(columns, rows))}>
+                <MenuItem onClick={() => setBoardArray(blinker())}>
                   Blinker
                 </MenuItem>
-                <MenuItem onClick={() => setBoardArray(toad(columns, rows))}>
-                  Toad
-                </MenuItem>
-                <MenuItem onClick={() => setBoardArray(beacon(columns, rows))}>
+                <MenuItem onClick={() => setBoardArray(toad())}>Toad</MenuItem>
+                <MenuItem onClick={() => setBoardArray(beacon())}>
                   Beacon
                 </MenuItem>
-                <MenuItem onClick={() => setBoardArray(pulsar(columns, rows))}>
+                <MenuItem onClick={() => setBoardArray(pulsar())}>
                   Pulsar
                 </MenuItem>
-                <MenuItem
-                  onClick={() => setBoardArray(pentaDecathlon(columns, rows))}
-                >
+                <MenuItem onClick={() => setBoardArray(pentaDecathlon())}>
                   Penta-Decathlon
                 </MenuItem>
               </MenuList>
@@ -117,22 +112,16 @@ export const App = () => {
                 Spaceships
               </MenuButton>
               <MenuList>
-                <MenuItem onClick={() => setBoardArray(glider(columns, rows))}>
+                <MenuItem onClick={() => importPattern(glider())}>
                   Glider
                 </MenuItem>
-                <MenuItem
-                  onClick={() => setBoardArray(lightWeightSS(columns, rows))}
-                >
+                <MenuItem onClick={() => setBoardArray(lightWeightSS())}>
                   LightWeight Spaceship
                 </MenuItem>
-                <MenuItem
-                  onClick={() => setBoardArray(middleWeightSS(columns, rows))}
-                >
+                <MenuItem onClick={() => setBoardArray(middleWeightSS())}>
                   MiddleWeight Spaceship
                 </MenuItem>
-                <MenuItem
-                  onClick={() => setBoardArray(heavyWeightSS(columns, rows))}
-                >
+                <MenuItem onClick={() => setBoardArray(heavyWeightSS())}>
                   HeavyWeight Spaceship
                 </MenuItem>
               </MenuList>
@@ -142,15 +131,13 @@ export const App = () => {
                 Methuselahs
               </MenuButton>
               <MenuList>
-                <MenuItem
-                  onClick={() => setBoardArray(rPentomino(columns, rows))}
-                >
+                <MenuItem onClick={() => setBoardArray(rPentomino())}>
                   R-pentomino
                 </MenuItem>
-                <MenuItem onClick={() => setBoardArray(diehard(columns, rows))}>
+                <MenuItem onClick={() => setBoardArray(diehard())}>
                   Diehard
                 </MenuItem>
-                <MenuItem onClick={() => setBoardArray(acorn(columns, rows))}>
+                <MenuItem onClick={() => setBoardArray(acorn())}>
                   Acorn
                 </MenuItem>
               </MenuList>
@@ -160,15 +147,13 @@ export const App = () => {
                 Guns
               </MenuButton>
               <MenuList>
-                <MenuItem
-                  onClick={() => setBoardArray(gosperGliderGun(columns, rows))}
-                >
+                <MenuItem onClick={() => setBoardArray(gosperGliderGun())}>
                   Gosper's Glider Gun
                 </MenuItem>
               </MenuList>
             </Menu>
           </Stack>
-          <Board tileLength={defaultTileLength} boardArray={boardArray} />
+          <Board boardArray={boardArray} setBoardArray={setBoardArray} />
         </VStack>
       </Box>
     </ChakraProvider>
