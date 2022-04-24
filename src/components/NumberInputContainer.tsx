@@ -10,6 +10,7 @@ interface NumberInputContainerProps {
   defaultValue: number;
   minValue: number;
   maxValue: number;
+  stepSize: number;
   value: number;
   setValue: (value: number) => void;
 }
@@ -18,6 +19,7 @@ const NumberInputContainer = ({
   defaultValue,
   minValue,
   maxValue,
+  stepSize,
   value,
   setValue,
 }: NumberInputContainerProps) => {
@@ -30,8 +32,10 @@ const NumberInputContainer = ({
       max={maxValue}
       maxW="100px"
       mr="2rem"
+      step={stepSize}
       value={value}
       onChange={handleChange}
+      borderColor="gray.300"
     >
       <NumberInputField readOnly />
       <NumberInputStepper>

@@ -1,26 +1,29 @@
-import { useEffect, useState, useRef, memo } from 'react';
-import { Box, Button } from '@chakra-ui/react';
+import { useEffect, useState, useRef } from 'react';
+import { Box, Button, Flex, Select } from '@chakra-ui/react';
 
 interface BoardProps {
-  tileLength: number;
   boardArray: any;
+  setBoardArray: (value: boolean[][]) => void;
 }
 
-const Board = memo(({ tileLength, boardArray }: BoardProps) => {
+const Board = ({ boardArray, setBoardArray }: BoardProps) => {
   const [run, setRun] = useState<boolean>(false);
+  const [tileLength, setTileLength] = useState<number>(8);
+  const [speed, setSpeed] = useState<number>(100);
 
   const canvas = useRef<HTMLCanvasElement>(null);
 
-  const columns = boardArray.length;
-  const rows = boardArray[0].length;
-  const canvasWidth = columns * tileLength;
-  const canvasHeight = rows * tileLength;
+  let columns = boardArray.length;
+  let rows = boardArray[0].length;
+  let canvasWidth = columns * tileLength;
+  let canvasHeight = rows * tileLength;
 
   const drawGridLines = (
     context: CanvasRenderingContext2D,
     columns: number,
     rows: number
   ) => {
+    context.strokeStyle = 'grey';
     context.beginPath();
     for (let i = 0; i < columns; ++i) {
       context.moveTo(i * tileLength, 0);
@@ -79,7 +82,6 @@ const Board = memo(({ tileLength, boardArray }: BoardProps) => {
 
   //TODO remove any
   const render = () => {
-    console.log('rendering');
     if (!canvas.current) {
       console.log('error getting canvas.current');
       return;
@@ -90,19 +92,28 @@ const Board = memo(({ tileLength, boardArray }: BoardProps) => {
       return;
     }
 
-    boardArray = applyRules(boardArray);
     fillGrid(ctx, boardArray);
-    drawGridLines(ctx, boardArray.length, boardArray[0].length);
+    if (tileLength >= 8)
+      drawGridLines(ctx, boardArray.length, boardArray[0].length);
+  };
+
+  const step = () => {
+    boardArray = applyRules(boardArray);
+    render();
   };
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval>;
-    if (run) intervalId = setInterval(() => render(), 20);
-    return () => clearInterval(intervalId);
+    if (run) {
+      intervalId = setInterval(() => step(), speed);
+      return () => {
+        clearInterval(intervalId);
+        setBoardArray(boardArray);
+      };
+    }
   }, [run]);
 
   useEffect(() => {
-    setRun(false);
     if (!canvas.current) {
       console.log('error getting canvas.current');
       return;
@@ -112,19 +123,59 @@ const Board = memo(({ tileLength, boardArray }: BoardProps) => {
       console.log('error getting canvas.current.context');
       return;
     }
-    ctx.strokeStyle = 'grey';
-    fillGrid(ctx, boardArray);
-    drawGridLines(ctx, columns, rows);
+    render();
   }, [boardArray, tileLength]);
 
   return (
-    <Box>
-      <Button width="8rem" marginBottom="1rem" onClick={() => setRun(!run)}>
+    <Flex flexDirection="column" alignItems="center" justifyContent="center">
+      <Flex
+        flexDirection="row"
+        alignItems="center"
+        justifyItems="center"
+        gap="1rem"
+      >
+        <Box height="20px" lineHeight="20px" whiteSpace="nowrap">
+          Tile size:
+        </Box>
+        <Select
+          value={tileLength}
+          onChange={(e) => setTileLength(Number(e.target.value))}
+          width="8rem"
+        >
+          <option value={4}>4px</option>
+          <option value={6}>6px</option>
+          <option value={8}>8px</option>
+          <option value={12}>12px</option>
+          <option value={16}>16px</option>
+        </Select>
+        <Box height="20px" lineHeight="20px" whiteSpace="nowrap">
+          Step speed:
+        </Box>
+        <Select
+          value={speed}
+          onChange={(e) => setSpeed(Number(e.target.value))}
+          width="8rem"
+        >
+          <option value={0}>0ms</option>
+          <option value={10}>10ms</option>
+          <option value={50}>50ms</option>
+          <option value={100}>100ms</option>
+          <option value={250}>250ms</option>
+          <option value={500}>500ms</option>
+          <option value={1000}>1000ms</option>
+        </Select>
+      </Flex>
+      <Button
+        width="8rem"
+        marginBottom="1rem"
+        onClick={() => setRun(!run)}
+        marginTop="2"
+      >
         {run ? 'Pause' : 'Play'}
       </Button>
       <canvas ref={canvas} width={canvasWidth} height={canvasHeight} />
-    </Box>
+    </Flex>
   );
-});
+};
 
 export default Board;
