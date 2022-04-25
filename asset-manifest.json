@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.js": "/GameOfLife/static/js/main.672b6dc9.js",
+    "static/js/377.5170326b.chunk.js": "/GameOfLife/static/js/377.5170326b.chunk.js",
+    "index.html": "/GameOfLife/index.html",
+    "main.672b6dc9.js.map": "/GameOfLife/static/js/main.672b6dc9.js.map",
+    "377.5170326b.chunk.js.map": "/GameOfLife/static/js/377.5170326b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.672b6dc9.js"
+  ]
+}
