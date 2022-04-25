@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   ChakraProvider,
   Box,
@@ -15,7 +15,7 @@ import { customTheme } from './utils/customTheme';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import Board from './components/Board';
 import NumberInput from './components/NumberInputContainer';
-import { create2DArray, resize2DArray } from './utils/utils';
+import { resize2DArray } from './utils/utils';
 import {
   blinker,
   toad,
