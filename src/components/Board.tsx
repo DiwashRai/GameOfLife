@@ -4,9 +4,10 @@ import { Box, Button, Flex, Select } from '@chakra-ui/react';
 interface BoardProps {
   boardArray: any;
   setBoardArray: (value: boolean[][]) => void;
+  setDisableUI: (value: boolean) => void;
 }
 
-const Board = ({ boardArray, setBoardArray }: BoardProps) => {
+const Board = ({ boardArray, setBoardArray, setDisableUI }: BoardProps) => {
   const [run, setRun] = useState<boolean>(false);
   const [tileLength, setTileLength] = useState<number>(8);
   const [speed, setSpeed] = useState<number>(100);
@@ -103,6 +104,7 @@ const Board = ({ boardArray, setBoardArray }: BoardProps) => {
   };
 
   useEffect(() => {
+    setDisableUI(run);
     let intervalId: ReturnType<typeof setInterval>;
     if (run) {
       intervalId = setInterval(() => step(), speed);
@@ -141,6 +143,7 @@ const Board = ({ boardArray, setBoardArray }: BoardProps) => {
           value={tileLength}
           onChange={(e) => setTileLength(Number(e.target.value))}
           width="8rem"
+          isDisabled={run}
         >
           <option value={4}>4px</option>
           <option value={6}>6px</option>
@@ -155,6 +158,7 @@ const Board = ({ boardArray, setBoardArray }: BoardProps) => {
           value={speed}
           onChange={(e) => setSpeed(Number(e.target.value))}
           width="8rem"
+          isDisabled={run}
         >
           <option value={0}>0ms</option>
           <option value={10}>10ms</option>

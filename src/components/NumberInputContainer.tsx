@@ -13,6 +13,7 @@ interface NumberInputContainerProps {
   stepSize: number;
   value: number;
   setValue: (value: number) => void;
+  isDisabled: boolean;
 }
 
 const NumberInputContainer = ({
@@ -22,6 +23,7 @@ const NumberInputContainer = ({
   stepSize,
   value,
   setValue,
+  isDisabled,
 }: NumberInputContainerProps) => {
   const handleChange = (value: any) => setValue(value);
 
@@ -36,6 +38,7 @@ const NumberInputContainer = ({
       value={value}
       onChange={handleChange}
       borderColor="gray.300"
+      isDisabled={isDisabled}
     >
       <NumberInputField readOnly />
       <NumberInputStepper>
