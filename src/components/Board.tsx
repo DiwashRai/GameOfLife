@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Box, Button, Flex, Select } from '@chakra-ui/react';
+import { create2DArray } from '../utils/utils';
 
 interface BoardProps {
   boardArray: any;
@@ -169,14 +170,29 @@ const Board = ({ boardArray, setBoardArray, setDisableUI }: BoardProps) => {
           <option value={1000}>1000ms</option>
         </Select>
       </Flex>
-      <Button
-        width="8rem"
-        marginBottom="1rem"
-        onClick={() => setRun(!run)}
-        marginTop="2"
+      <Flex
+        flexDirection="row"
+        alignItems="center"
+        justifyItems="center"
+        gap="1rem"
       >
-        {run ? 'Pause' : 'Play'}
-      </Button>
+        <Button
+          width="8rem"
+          marginBottom="1rem"
+          onClick={() => setRun(!run)}
+          marginTop="2"
+        >
+          {run ? 'Pause' : 'Play'}
+        </Button>
+        <Button
+          width="8rem"
+          marginBottom="1rem"
+          onClick={() => setBoardArray(create2DArray(columns, rows))}
+          marginTop="2"
+        >
+          Clear
+        </Button>
+      </Flex>
       <canvas ref={canvas} width={canvasWidth} height={canvasHeight} />
     </Flex>
   );
